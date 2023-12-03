@@ -53,7 +53,7 @@ function deleteChildElements(parentElement) {
 
 // 6
 function addButtonListeners() {
-  let buttons = document.querySelector("main").querySelectorAll("button");
+  let buttons = document.querySelector("main").querySelectorAll("button[data-post-id]");
   buttons.forEach((button) => {
     button.addEventListener(
       "click",
@@ -223,11 +223,25 @@ async function refreshPosts(posts) {
 // 19
 async function selectMenuChangeEventHandler(event) {
   if (!event) return undefined;
+
   const userId = event?.target?.value || 1;
   const posts = await getUserPosts(userId);
+
+  if (!posts) {
+    console.error("Error fetching posts for user with ID:", userId);
+    return undefined;
+  }
+
   const refreshPostsArray = await refreshPosts(posts);
+
+  if (!refreshPostsArray.every((result) => result !== undefined)) {
+    console.error("Error refreshing posts array:", refreshPostsArray);
+    return undefined;
+  }
+
   return [userId, posts, refreshPostsArray];
 }
+
 
 // 20
 async function initPage() {
