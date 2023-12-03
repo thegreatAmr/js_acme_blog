@@ -52,19 +52,17 @@ function deleteChildElements(parentElement) {
 }
 
 // 6
-function addButtonListeners() {
-  let buttons = document.querySelector("main").querySelectorAll("button[data-post-id]");
-  buttons.forEach((button) => {
-    button.addEventListener(
-      "click",
-      function (e) {
-        toggleComments(e, button.dataset.postId);
-      },
-      false
-    );
-  });
+const addButtonListeners = () => {
+  const buttons = document.querySelectorAll('main button');
+  for (let i = 0; i < buttons.length; i++) {
+    const postId = buttons[i].dataset.postId;
+    buttons[i].addEventListener('click', (event) => {
+      toggleComments(event, postId);
+    }, true);
+  }
   return buttons;
-}
+};
+
 
 
 // 7
@@ -221,26 +219,15 @@ async function refreshPosts(posts) {
 }
 
 // 19
-async function selectMenuChangeEventHandler(event) {
-  if (!event) return undefined;
-
+const selectMenuChangeEventHandler = async (event) => {
+  if (!event) {
+    return undefined;
+  }
   const userId = event?.target?.value || 1;
-  const posts = await getUserPosts(userId);
-
-  if (!posts) {
-    console.error("Error fetching posts for user with ID:", userId);
-    return undefined;
-  }
-
-  const refreshPostsArray = await refreshPosts(posts);
-
-  if (!refreshPostsArray.every((result) => result !== undefined)) {
-    console.error("Error refreshing posts array:", refreshPostsArray);
-    return undefined;
-  }
-
-  return [userId, posts, refreshPostsArray];
-}
+  const postJsonData = await getUserPosts(userId);
+  const refreshPostsArray = await refreshPosts(postJsonData);
+  return [userId, postJsonData, refreshPostsArray];
+};
 
 
 // 20
